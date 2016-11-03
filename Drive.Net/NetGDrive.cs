@@ -84,8 +84,7 @@ namespace DriveNET
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine("client_secret.json file not found.\nUse constructor with key parameters or load a valid client_secret.json file");
-                return;
+                System.Diagnostics.Debug.WriteLine("client_secret.json file not found.\nUse constructor with key parameters or load a valid client_secret.json file");
             }
 
         }
@@ -161,9 +160,7 @@ namespace DriveNET
         }
         public GFile GetFile(string Name)
         {
-            NetGSearchBuilder b = new NetGSearchBuilder();
-            b.AddField(Field.Name).Equal(Name);
-            string search = b.Search;
+            string search = string.Format("name = '{0}'",Name);
             try
             {
                 return GetFiles(search, 1)[0];
@@ -196,8 +193,8 @@ namespace DriveNET
         /// <returns></returns>
         public IList<GFile> GetFiles(string search, int resultSize = 1000)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("Retrieving files... (Max : {0} files) - SEARCH =" + search,resultSize);
+            //Console.Write("Retrieving files... (Max : {0} files) - SEARCH =" + search,resultSize);
+
             IList<GFile> Files = new List<GFile>();
             try
             {
@@ -212,19 +209,16 @@ namespace DriveNET
                 Files = request.Execute().Files;
 
                 if (Files == null || Files.Count == 0)
-                    Console.WriteLine("\nNo files found");
-                else
-                    Console.WriteLine(" - {0} Files Found.", Files.Count);
+                    //Console.WriteLine("\nNo files found");
+                    return null;
+                //else
+                    //Console.WriteLine(" - {0} Files Found.", Files.Count);
 
             }
             catch (GoogleException exception)
             {
-                Console.ForegroundColor = ConsoleColor.White;
                 LogError(exception);
             }
-
-            Console.ForegroundColor = ConsoleColor.White;
-
 
             return Files;
         }
@@ -286,7 +280,7 @@ namespace DriveNET
 
             if (data == null || data.Length == 0)
             {
-                Console.WriteLine("No data specified");
+                //Console.WriteLine("No data specified");
                 return;
             }
 
