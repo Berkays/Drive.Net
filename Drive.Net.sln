@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drive.Net", "Drive.Net\Drive.Net.csproj", "{93F75BB0-1803-4D4F-896C-A17ED9599BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{56177800-CBDE-4BCF-93AC-21C9A3B9CE02}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93F75BB0-1803-4D4F-896C-A17ED9599BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93F75BB0-1803-4D4F-896C-A17ED9599BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93F75BB0-1803-4D4F-896C-A17ED9599BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93F75BB0-1803-4D4F-896C-A17ED9599BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56177800-CBDE-4BCF-93AC-21C9A3B9CE02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56177800-CBDE-4BCF-93AC-21C9A3B9CE02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56177800-CBDE-4BCF-93AC-21C9A3B9CE02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56177800-CBDE-4BCF-93AC-21C9A3B9CE02}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
