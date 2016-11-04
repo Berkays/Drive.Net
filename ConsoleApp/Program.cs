@@ -10,18 +10,23 @@ namespace ConsoleApp
             Console.SetWindowSize(180, 30);
             Console.ForegroundColor = ConsoleColor.White;
 
-            NetGDrive drive = new NetGDrive(LoggingEnabled:true);
+            NetGDrive drive = new NetGDrive(LoggingEnabled: true);
 
             NetGSearchBuilder builder = new NetGSearchBuilder();
 
-            builder.AddField(Field.modifiedTime).Smaller(DateTime.Now).And().PStart().AddField(Field.mimeType).Contains(MimeType.Image).Or().AddField(Field.mimeType).Contains(MimeType.Text).PEnd();
+            builder.AddField(Field.modifiedTime).Smaller(DateTime.Now);
 
-            var files = drive.GetFiles(builder.Search, 10);
+            for (int i = 0; i < 10; i++)
+            {
+                var files = drive.GetFiles(builder, 10);
 
-            Console.WriteLine();
+                Console.WriteLine("\n");
 
-            foreach (var file in files)
-                Console.WriteLine(file.Name);
+                foreach (var file in files.Result)
+                    Console.WriteLine(file.Name);
+            }
+
+            drive.Dispose();
 
             Console.WriteLine("\nFinished");
             Console.ReadKey();

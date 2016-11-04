@@ -211,6 +211,12 @@ namespace DriveNET
             lastField = FieldList[f];
             return this;
         }
+        public void Clear()
+        {
+            Search = String.Empty;
+            lastField = null;
+            valueField = new ValueField();
+        }
 
         #region Operator Methods
 

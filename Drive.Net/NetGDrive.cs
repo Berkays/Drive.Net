@@ -12,6 +12,7 @@ using Google.Apis.Util.Store;
 using Google.Apis.Services;
 using Google.Apis.Drive.v3.Data;
 using Google.Apis.Auth.OAuth2.Responses;
+using System.Threading.Tasks;
 
 namespace DriveNET
 {
@@ -145,11 +146,11 @@ namespace DriveNET
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public GFile GetFileById(string Id)
+        public async Task<GFile> GetFileById(string Id)
         {
             try
             {
-                GFile file = mService.Files.Get(Id).Execute();
+                GFile file = await mService.Files.Get(Id).ExecuteAsync();
                 return file;
             }
             catch (GoogleException exception)
@@ -158,12 +159,13 @@ namespace DriveNET
                 return null;
             }
         }
-        public GFile GetFile(string Name)
+        public async Task<GFile> GetFileByName(string Name)
         {
             string search = string.Format("name = '{0}'",Name);
             try
             {
-                return GetFiles(search, 1)[0];
+                var response = await GetFiles(search, 1);
+                return response[0];
             }
             catch (GoogleException exception)
             {
@@ -172,11 +174,12 @@ namespace DriveNET
             }
         }
 
-        public IList<Revision> GetFileRevisions(string Id)
+        public async Task<IList<Revision>> GetFileRevisions(string Id)
         {
             try
             {
-                return mService.Revisions.List(Id).Execute().Revisions;
+                var revisionList = await mService.Revisions.List(Id).ExecuteAsync();
+                return revisionList.Revisions;
             }
             catch (GoogleException exception)
             {
@@ -191,9 +194,9 @@ namespace DriveNET
         /// <param name="search"></param>
         /// <param name="resultSize"></param>
         /// <returns></returns>
-        public IList<GFile> GetFiles(string search, int resultSize = 1000)
+        public async Task<IList<GFile>> GetFiles(string search, int resultSize = 1000)
         {
-            //Console.Write("Retrieving files... (Max : {0} files) - SEARCH =" + search,resultSize);
+            Console.Write("Retrieving files... (Max : {0} files) - SEARCH =" + search,resultSize);
 
             IList<GFile> Files = new List<GFile>();
             try
@@ -206,7 +209,9 @@ namespace DriveNET
                     request.Q = search;
                 }
 
-                Files = request.Execute().Files;
+                var task = await request.ExecuteAsync();
+                Files = task.Files;
+                //Files = request.Execute().Files;
 
                 if (Files == null || Files.Count == 0)
                     //Console.WriteLine("\nNo files found");
@@ -222,18 +227,23 @@ namespace DriveNET
 
             return Files;
         }
+        public async Task<IList<GFile>> GetFiles(NetGSearchBuilder builder, int resultSize = 1000)
+        {
+            var files = await this.GetFiles(builder.Search, resultSize);
+            return files;
+        }
 
         /// <summary>
-        /// Download a file and get its bytes
+        /// Download a file and get it's byte stream
         /// </summary>
         /// <param name="FileId"></param>
         /// <returns></returns>
-        public byte[] Download(string FileId)
+        public async Task<byte[]> Download(string FileId)
         {
             try
             {
                 MemoryStream ms = new MemoryStream();
-                mService.Files.Get(FileId).Download(ms);
+                await mService.Files.Get(FileId).DownloadAsync(ms);
 
                 byte[] data = ms.ToArray();
                 return data;
@@ -250,14 +260,14 @@ namespace DriveNET
         /// <param name="FileId"></param>
         /// <param name="RevisionId"></param>
         /// <returns></returns>
-        public byte[] Download(string FileId, string RevisionId)
+        public async Task<byte[]> Download(string FileId, string RevisionId)
         {
             try
             {
 
                 MemoryStream ms = new MemoryStream();
 
-                mService.Revisions.Get(FileId, RevisionId).Download(ms);
+                await mService.Revisions.Get(FileId, RevisionId).DownloadAsync(ms);
                 return ms.ToArray();
             }
             catch (GoogleException exception)
@@ -275,7 +285,7 @@ namespace DriveNET
         /// <param name="parentId"></param>
         /// <param name="Description"></param>
         /// <param name="mimeType"></param>
-        public void Upload(byte[] data, string Name, string parentId = "", string mimeType = "")
+        public async void Upload(byte[] data, string Name, string parentId = "", string mimeType = "")
         {
 
             if (data == null || data.Length == 0)
@@ -303,7 +313,7 @@ namespace DriveNET
             {
                 //Upload our file
                 FilesResource.CreateMediaUpload request = mService.Files.Create(body, stream, body.MimeType);
-                request.Upload();
+                await request.UploadAsync();
             }
             catch (GoogleException exception)
             {
@@ -316,13 +326,13 @@ namespace DriveNET
         /// Delete a file with specified id
         /// </summary>
         /// <param name="FileId"></param>
-        public void Thrash(string FileId)
+        public async void Thrash(string FileId)
         {
             try
             {
                 GFile file = new GFile();
                 file.Trashed = true;
-                mService.Files.Update(file, FileId).Execute();
+                await mService.Files.Update(file, FileId).ExecuteAsync();
             }
             catch (GoogleException exception)
             {
@@ -334,13 +344,13 @@ namespace DriveNET
         /// Unthrashes a file with specified Id.
         /// </summary>
         /// <param name="FileId"></param>
-        public void Unthrash(string FileId)
+        public async void Unthrash(string FileId)
         {
             try
             {
                 GFile file = new GFile();
                 file.Trashed = false;
-                mService.Files.Update(file, FileId).Execute();
+                await mService.Files.Update(file, FileId).ExecuteAsync();
             }
             catch (GoogleException exception)
             {
@@ -351,11 +361,11 @@ namespace DriveNET
         /// <summary>
         /// Removes all files in the thrash PERMAMENTLY.
         /// </summary>
-        public void EmptyThrash()
+        public async void EmptyThrash()
         {
             try
             {
-                mService.Files.EmptyTrash().Execute();
+                await mService.Files.EmptyTrash().ExecuteAsync();
             }
             catch (GoogleException exception)
             {
