@@ -14,6 +14,8 @@ namespace DriveNET
 
         public void Log(Exception exception)
         {
+            Console.WriteLine(exception.ToString());
+
             if (exception is GoogleException)
             {
                 var googleException = (GoogleException)exception;
